@@ -343,10 +343,40 @@ const TicketForm = ({ onBack }) => {
               <label className="block text-sm font-semibold text-gray-700">
                 Priority Level *
               </label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <label className={`relative flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
+                  formData.priority === 'Very Urgent' 
+                    ? 'border-red-600 bg-red-50 ring-2 ring-red-600 ring-opacity-20' 
+                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                }`}>
+                  <input
+                    id="very-urgent"
+                    name="priority"
+                    type="radio"
+                    value="Very Urgent"
+                    checked={formData.priority === 'Very Urgent'}
+                    onChange={handleChange}
+                    required
+                    className="sr-only"
+                  />
+                  <div className="flex flex-col items-center space-y-2 w-full">
+                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                      formData.priority === 'Very Urgent' ? 'border-red-600 bg-red-600' : 'border-gray-300'
+                    }`}>
+                      {formData.priority === 'Very Urgent' && (
+                        <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
+                      )}
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xs font-semibold text-red-700">VERY URGENT</div>
+                      <div className="text-xs text-gray-500">Critical issue</div>
+                    </div>
+                  </div>
+                </label>
+
                 <label className={`relative flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
                   formData.priority === 'Urgent' 
-                    ? 'border-red-500 bg-red-50 ring-2 ring-red-500 ring-opacity-20' 
+                    ? 'border-orange-500 bg-orange-50 ring-2 ring-orange-500 ring-opacity-20' 
                     : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                 }`}>
                   <input
@@ -361,75 +391,15 @@ const TicketForm = ({ onBack }) => {
                   />
                   <div className="flex flex-col items-center space-y-2 w-full">
                     <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                      formData.priority === 'Urgent' ? 'border-red-500 bg-red-500' : 'border-gray-300'
+                      formData.priority === 'Urgent' ? 'border-orange-500 bg-orange-500' : 'border-gray-300'
                     }`}>
                       {formData.priority === 'Urgent' && (
                         <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
                       )}
                     </div>
                     <div className="text-center">
-                      <div className="text-xs font-semibold text-red-600">URGENT</div>
-                      <div className="text-xs text-gray-500">Critical</div>
-                    </div>
-                  </div>
-                </label>
-
-                <label className={`relative flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
-                  formData.priority === 'High' 
-                    ? 'border-orange-500 bg-orange-50 ring-2 ring-orange-500 ring-opacity-20' 
-                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                }`}>
-                  <input
-                    id="high"
-                    name="priority"
-                    type="radio"
-                    value="High"
-                    checked={formData.priority === 'High'}
-                    onChange={handleChange}
-                    required
-                    className="sr-only"
-                  />
-                  <div className="flex flex-col items-center space-y-2 w-full">
-                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                      formData.priority === 'High' ? 'border-orange-500 bg-orange-500' : 'border-gray-300'
-                    }`}>
-                      {formData.priority === 'High' && (
-                        <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
-                      )}
-                    </div>
-                    <div className="text-center">
-                      <div className="text-xs font-semibold text-orange-600">HIGH</div>
-                      <div className="text-xs text-gray-500">Important</div>
-                    </div>
-                  </div>
-                </label>
-
-                <label className={`relative flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
-                  formData.priority === 'Medium' 
-                    ? 'border-yellow-500 bg-yellow-50 ring-2 ring-yellow-500 ring-opacity-20' 
-                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                }`}>
-                  <input
-                    id="medium"
-                    name="priority"
-                    type="radio"
-                    value="Medium"
-                    checked={formData.priority === 'Medium'}
-                    onChange={handleChange}
-                    required
-                    className="sr-only"
-                  />
-                  <div className="flex flex-col items-center space-y-2 w-full">
-                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                      formData.priority === 'Medium' ? 'border-yellow-500 bg-yellow-500' : 'border-gray-300'
-                    }`}>
-                      {formData.priority === 'Medium' && (
-                        <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
-                      )}
-                    </div>
-                    <div className="text-center">
-                      <div className="text-xs font-semibold text-yellow-600">MEDIUM</div>
-                      <div className="text-xs text-gray-500">Standard</div>
+                      <div className="text-xs font-semibold text-orange-600">URGENT</div>
+                      <div className="text-xs text-gray-500">Needs attention</div>
                     </div>
                   </div>
                 </label>
