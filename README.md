@@ -48,28 +48,64 @@ The ticket submission form includes:
 
 ### Prerequisites
 
-- Node.js (version 14 or higher)
-- npm or yarn
+Before running this project, make sure you have the following installed on your machine:
 
-### Installation
+- **Node.js** (version 16 or higher) - [Download here](https://nodejs.org/)
+- **npm** (comes with Node.js) or **yarn** - [Yarn installation](https://yarnpkg.com/getting-started/install)
+- **Git** - [Download here](https://git-scm.com/downloads)
 
-1. Clone the repository:
+### Quick Start Guide
+
+#### Option 1: Automated Setup (Recommended for beginners)
+
+**For Mac/Linux users:**
+```bash
+git clone https://github.com/YOUR_USERNAME/it-support-ticket-system.git
+cd it-support-ticket-system
+./quick-start.sh
+```
+
+**For Windows users:**
+```bash
+git clone https://github.com/YOUR_USERNAME/it-support-ticket-system.git
+cd it-support-ticket-system
+quick-start.bat
+```
+
+#### Option 2: Manual Setup
+
+1. **Clone the repository:**
    ```bash
-   git clone <repository-url>
-   cd ticket-form
+   git clone https://github.com/YOUR_USERNAME/it-support-ticket-system.git
+   cd it-support-ticket-system
    ```
 
-2. Install dependencies:
+2. **Install dependencies:**
    ```bash
    npm install
    ```
+   *This will install all required packages including React, Vite, TailwindCSS, and Axios*
 
-3. Start the development server:
+3. **Start the development server:**
    ```bash
    npm run dev
    ```
 
-4. Open your browser and navigate to `http://localhost:5173`
+4. **Open your browser:**
+   - Navigate to `http://localhost:5173`
+   - You should see the IT Support Portal landing page
+
+#### 📖 Need More Help?
+
+- **New to web development?** Check out [SETUP.md](SETUP.md) for detailed step-by-step instructions
+- **Experienced developer?** The quick start above should be sufficient
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build locally
+- `npm run lint` - Run ESLint for code quality
 
 ### Building for Production
 
@@ -77,7 +113,21 @@ The ticket submission form includes:
 npm run build
 ```
 
-The built files will be in the `dist` directory.
+The built files will be in the `dist` directory and ready for deployment.
+
+### Troubleshooting
+
+**Port already in use?**
+- Vite will automatically try the next available port (5174, 5175, etc.)
+- Or specify a custom port: `npm run dev -- --port 3000`
+
+**Dependencies not installing?**
+- Try clearing npm cache: `npm cache clean --force`
+- Delete `node_modules` and `package-lock.json`, then run `npm install` again
+
+**Build errors?**
+- Make sure you're using Node.js version 16 or higher: `node --version`
+- Update npm to latest version: `npm install -g npm@latest`
 
 ## 🔧 Configuration
 
