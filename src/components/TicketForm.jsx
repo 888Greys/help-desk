@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import axios from 'axios'
+import { validateFormData, sanitizeFormData } from '../utils/validation'
 
 const TicketForm = ({ onBack }) => {
   const [formData, setFormData] = useState({
@@ -29,7 +30,17 @@ const TicketForm = ({ onBack }) => {
     setSubmitMessage('')
 
     try {
-      const response = await axios.post('https://myownwork.app.n8n.cloud/webhook/create-ticket', formData)
+      // Sanitize and validate form data
+      const sanitizedData = sanitizeFormData(formData)
+      const validation = validateFormData(sanitizedData)
+
+      if (!validation.isValid) {
+        setSubmitMessage(`Validation Error: ${validation.errors.join(', ')}`)
+        setIsSubmitting(false)
+        return
+      }
+
+      const response = await axios.post('https://myownwork.app.n8n.cloud/webhook/create-ticket', sanitizedData)
       setSubmitMessage('Ticket submitted successfully!')
       setFormData({
         email: '',
@@ -41,7 +52,14 @@ const TicketForm = ({ onBack }) => {
         office: ''
       })
     } catch (error) {
-      setSubmitMessage('Error submitting ticket. Please try again.')
+      // Enhanced error handling
+      if (error.response?.data?.message) {
+        setSubmitMessage(`Error: ${error.response.data.message}`)
+      } else if (error.message.includes('constraint')) {
+        setSubmitMessage('Database constraint error. Please check that all values are valid.')
+      } else {
+        setSubmitMessage('Error submitting ticket. Please try again.')
+      }
       console.error('Error:', error)
     } finally {
       setIsSubmitting(false)
@@ -305,25 +323,25 @@ const TicketForm = ({ onBack }) => {
                 </label>
 
                 <label className={`relative flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
-                  formData.category === 'Network' 
+                  formData.category === 'Networking' 
                     ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500 ring-opacity-20' 
                     : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                 }`}>
                   <input
-                    id="network"
+                    id="networking"
                     name="category"
                     type="radio"
-                    value="Network"
-                    checked={formData.category === 'Network'}
+                    value="Networking"
+                    checked={formData.category === 'Networking'}
                     onChange={handleChange}
                     required
                     className="sr-only"
                   />
                   <div className="flex items-center space-x-3">
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      formData.category === 'Network' ? 'border-blue-500 bg-blue-500' : 'border-gray-300'
+                      formData.category === 'Networking' ? 'border-blue-500 bg-blue-500' : 'border-gray-300'
                     }`}>
-                      {formData.category === 'Network' && (
+                      {formData.category === 'Networking' && (
                         <div className="w-2 h-2 bg-white rounded-full"></div>
                       )}
                     </div>
@@ -331,7 +349,7 @@ const TicketForm = ({ onBack }) => {
                       <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
                       </svg>
-                      <span className="text-sm font-medium text-gray-700">Network</span>
+                      <span className="text-sm font-medium text-gray-700">Networking</span>
                     </div>
                   </div>
                 </label>
