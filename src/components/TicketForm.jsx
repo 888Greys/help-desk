@@ -29,7 +29,7 @@ const TicketForm = ({ onBack }) => {
     setSubmitMessage('')
 
     try {
-      const response = await axios.post('https://myownwork.app.n8n.cloud/webhook/create-ticket', formData)
+      const response = await axios.post('https://myownwork.app.n8n.cloud/webhook-test/create-ticket', formData)
       setSubmitMessage('Ticket submitted successfully!')
       setFormData({
         email: '',
