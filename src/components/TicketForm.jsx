@@ -34,7 +34,7 @@ const TicketForm = ({ onBack }) => {
     const validation = validateFormData(sanitizedData)
 
     if (!validation.isValid) {
-      setSubmitMessage('Validation Error: ${validation.errors.join(', ')}')
+      setSubmitMessage(`Validation Error: ${validation.errors.join(', ')}`)
       setIsSubmitting(false)
       return
     }
@@ -58,7 +58,7 @@ const TicketForm = ({ onBack }) => {
       })
     } catch (error) {
       if (error.response?.data?.message) {
-        setSubmitMessage(Error: ${error.response.data.message})
+        setSubmitMessage(`Error: ${error.response.data.message}`)
       } else if (error.message.includes('constraint')) {
         setSubmitMessage(
           'Database constraint error. Please check that all values are valid.'
@@ -71,12 +71,6 @@ const TicketForm = ({ onBack }) => {
       setIsSubmitting(false)
     }
   }
-
-  // ... rest of the JSX (UI code for form, inputs, layout, etc.) remains unchanged ...
-  // 🟢 YOU DO NOT NEED TO EDIT ANY JSX BELOW UNLESS YOU WANT TO MAKE VISUAL CHANGES
-  // Just make sure to place the full JSX structure after the logic above as it was
-}
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
@@ -543,5 +537,6 @@ const TicketForm = ({ onBack }) => {
       </div>
     </div>
   )
+}
 
 export default TicketForm
