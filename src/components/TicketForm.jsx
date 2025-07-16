@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import axios from 'axios'
+import { validateFormData, sanitizeFormData } from '../utils/validation'
 
 const TicketForm = ({ onBack }) => {
   const [formData, setFormData] = useState({
@@ -11,13 +12,13 @@ const TicketForm = ({ onBack }) => {
     floor: '',
     office: ''
   })
-  
+
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitMessage, setSubmitMessage] = useState('')
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value
     }))
@@ -28,8 +29,23 @@ const TicketForm = ({ onBack }) => {
     setIsSubmitting(true)
     setSubmitMessage('')
 
+    // Step 1: Sanitize and validate input
+    const sanitizedData = sanitizeFormData(formData)
+    const validation = validateFormData(sanitizedData)
+
+    if (!validation.isValid) {
+      setSubmitMessage('Validation Error: ${validation.errors.join(', ')}')
+      setIsSubmitting(false)
+      return
+    }
+
     try {
-      const response = await axios.post('https://myownwork.app.n8n.cloud/webhook-test/create-ticket', formData)
+      // Step 2: Submit the sanitized data
+      const response = await axios.post(
+        'https://deamon888.app.n8n.cloud/webhook/create-ticket',
+        sanitizedData
+      )
+
       setSubmitMessage('Ticket submitted successfully!')
       setFormData({
         email: '',
@@ -41,12 +57,26 @@ const TicketForm = ({ onBack }) => {
         office: ''
       })
     } catch (error) {
-      setSubmitMessage('Error submitting ticket. Please try again.')
-      console.error('Error:', error)
+      if (error.response?.data?.message) {
+        setSubmitMessage(Error: ${error.response.data.message})
+      } else if (error.message.includes('constraint')) {
+        setSubmitMessage(
+          'Database constraint error. Please check that all values are valid.'
+        )
+      } else {
+        setSubmitMessage('Error submitting ticket. Please try again.')
+      }
+      console.error('Submission error:', error)
     } finally {
       setIsSubmitting(false)
     }
   }
+
+  // ... rest of the JSX (UI code for form, inputs, layout, etc.) remains unchanged ...
+  // 🟢 YOU DO NOT NEED TO EDIT ANY JSX BELOW UNLESS YOU WANT TO MAKE VISUAL CHANGES
+  // Just make sure to place the full JSX structure after the logic above as it was
+}
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
@@ -305,25 +335,25 @@ const TicketForm = ({ onBack }) => {
                 </label>
 
                 <label className={`relative flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
-                  formData.category === 'Network' 
+                  formData.category === 'Networking' 
                     ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500 ring-opacity-20' 
                     : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                 }`}>
                   <input
-                    id="network"
+                    id="networking"
                     name="category"
                     type="radio"
-                    value="Network"
-                    checked={formData.category === 'Network'}
+                    value="Networking"
+                    checked={formData.category === 'Networking'}
                     onChange={handleChange}
                     required
                     className="sr-only"
                   />
                   <div className="flex items-center space-x-3">
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      formData.category === 'Network' ? 'border-blue-500 bg-blue-500' : 'border-gray-300'
+                      formData.category === 'Networking' ? 'border-blue-500 bg-blue-500' : 'border-gray-300'
                     }`}>
-                      {formData.category === 'Network' && (
+                      {formData.category === 'Networking' && (
                         <div className="w-2 h-2 bg-white rounded-full"></div>
                       )}
                     </div>
@@ -331,7 +361,7 @@ const TicketForm = ({ onBack }) => {
                       <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
                       </svg>
-                      <span className="text-sm font-medium text-gray-700">Network</span>
+                      <span className="text-sm font-medium text-gray-700">Networking</span>
                     </div>
                   </div>
                 </label>
@@ -343,10 +373,40 @@ const TicketForm = ({ onBack }) => {
               <label className="block text-sm font-semibold text-gray-700">
                 Priority Level *
               </label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <label className={`relative flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
+                  formData.priority === 'Very Urgent' 
+                    ? 'border-red-600 bg-red-50 ring-2 ring-red-600 ring-opacity-20' 
+                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                }`}>
+                  <input
+                    id="very-urgent"
+                    name="priority"
+                    type="radio"
+                    value="Very Urgent"
+                    checked={formData.priority === 'Very Urgent'}
+                    onChange={handleChange}
+                    required
+                    className="sr-only"
+                  />
+                  <div className="flex flex-col items-center space-y-2 w-full">
+                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                      formData.priority === 'Very Urgent' ? 'border-red-600 bg-red-600' : 'border-gray-300'
+                    }`}>
+                      {formData.priority === 'Very Urgent' && (
+                        <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
+                      )}
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xs font-semibold text-red-700">VERY URGENT</div>
+                      <div className="text-xs text-gray-500">Critical issue</div>
+                    </div>
+                  </div>
+                </label>
+
                 <label className={`relative flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
                   formData.priority === 'Urgent' 
-                    ? 'border-red-500 bg-red-50 ring-2 ring-red-500 ring-opacity-20' 
+                    ? 'border-orange-500 bg-orange-50 ring-2 ring-orange-500 ring-opacity-20' 
                     : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                 }`}>
                   <input
@@ -361,75 +421,15 @@ const TicketForm = ({ onBack }) => {
                   />
                   <div className="flex flex-col items-center space-y-2 w-full">
                     <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                      formData.priority === 'Urgent' ? 'border-red-500 bg-red-500' : 'border-gray-300'
+                      formData.priority === 'Urgent' ? 'border-orange-500 bg-orange-500' : 'border-gray-300'
                     }`}>
                       {formData.priority === 'Urgent' && (
                         <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
                       )}
                     </div>
                     <div className="text-center">
-                      <div className="text-xs font-semibold text-red-600">URGENT</div>
-                      <div className="text-xs text-gray-500">Critical</div>
-                    </div>
-                  </div>
-                </label>
-
-                <label className={`relative flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
-                  formData.priority === 'High' 
-                    ? 'border-orange-500 bg-orange-50 ring-2 ring-orange-500 ring-opacity-20' 
-                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                }`}>
-                  <input
-                    id="high"
-                    name="priority"
-                    type="radio"
-                    value="High"
-                    checked={formData.priority === 'High'}
-                    onChange={handleChange}
-                    required
-                    className="sr-only"
-                  />
-                  <div className="flex flex-col items-center space-y-2 w-full">
-                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                      formData.priority === 'High' ? 'border-orange-500 bg-orange-500' : 'border-gray-300'
-                    }`}>
-                      {formData.priority === 'High' && (
-                        <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
-                      )}
-                    </div>
-                    <div className="text-center">
-                      <div className="text-xs font-semibold text-orange-600">HIGH</div>
-                      <div className="text-xs text-gray-500">Important</div>
-                    </div>
-                  </div>
-                </label>
-
-                <label className={`relative flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
-                  formData.priority === 'Medium' 
-                    ? 'border-yellow-500 bg-yellow-50 ring-2 ring-yellow-500 ring-opacity-20' 
-                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                }`}>
-                  <input
-                    id="medium"
-                    name="priority"
-                    type="radio"
-                    value="Medium"
-                    checked={formData.priority === 'Medium'}
-                    onChange={handleChange}
-                    required
-                    className="sr-only"
-                  />
-                  <div className="flex flex-col items-center space-y-2 w-full">
-                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                      formData.priority === 'Medium' ? 'border-yellow-500 bg-yellow-500' : 'border-gray-300'
-                    }`}>
-                      {formData.priority === 'Medium' && (
-                        <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
-                      )}
-                    </div>
-                    <div className="text-center">
-                      <div className="text-xs font-semibold text-yellow-600">MEDIUM</div>
-                      <div className="text-xs text-gray-500">Standard</div>
+                      <div className="text-xs font-semibold text-orange-600">URGENT</div>
+                      <div className="text-xs text-gray-500">Needs attention</div>
                     </div>
                   </div>
                 </label>
@@ -543,6 +543,5 @@ const TicketForm = ({ onBack }) => {
       </div>
     </div>
   )
-}
 
 export default TicketForm
